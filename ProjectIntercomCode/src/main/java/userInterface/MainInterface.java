@@ -1,6 +1,6 @@
-package UserInterface;
+package userInterface;
 
-import Database.ContactList;
+import database.ContactList;
 
 import javax.swing.*;
 import java.io.IOException;
