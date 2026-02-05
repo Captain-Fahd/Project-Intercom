@@ -1,11 +1,13 @@
 package database;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import database.Contact;
 
 public class ContactList {
-    HashMap<String, String> contact = new HashMap<>();
+    HashMap<String, String> contacts = new HashMap<>();
     public ContactList(String csvFile) throws IOException {
         loadFromCSV(csvFile);
     }
@@ -20,7 +22,7 @@ public class ContactList {
             if (fields.length >= 2) {
                 String name = fields[0].trim();
                 String ip = fields[1].trim();
-                contact.put(name, ip);
+                contacts.put(name, ip);
             }
         }
         reader.close();
@@ -36,15 +38,32 @@ public class ContactList {
     }
 
     public void addContact(String name, String ip) {
-        contact.put(name, ip);
+        contacts.put(name, ip);
     }
+
+
     public void removeContact(String name) {
-        contact.remove(name);
+        contacts.remove(name);
     }
-    public String getContact(String name) {
-        return contact.get(name);
+
+
+    public Contact getContact(String nameOrIP) {
+        Contact targetContact = new Contact();
+        if (nameOrIP.contains(".")) {
+            contacts.forEach((key, value) -> {
+                if (value.equals(nameOrIP)) {
+                    targetContact.name = key;
+                    targetContact.ip = value;
+                }
+            });
+        } else {
+            targetContact.name = nameOrIP;
+            targetContact.ip = contacts.get(nameOrIP);
+        }
+        return targetContact;
     }
+
     public HashMap<String, String> getContacts() {
-        return contact;
+        return contacts;
     }
 }

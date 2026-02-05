@@ -19,16 +19,34 @@ public class AudioPlayback {
         }
     }
 
+
+
     public void playAudio() throws Exception {
         running = true;
-        audioQueue = new LinkedBlockingQueue<>(10);
         line = (SourceDataLine) AudioSystem.getLine(info);
         line.open(format);
         line.start();
         new Thread(this::runningLoop).start();
         }
 
-    public void runningLoop() {
+    private void runningLoop() {
+        while (running) {
+            try{
+                byte[] audioData = audioQueue.take();
+                line.write(audioData, 0, audioData.length);
+
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public void stopPlayback() {
+        running = false;
+        if (line != null) {
+            line.stop();
+            line.close();
+        }
     }
 
 
